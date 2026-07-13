@@ -8,13 +8,47 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](https://opensource.org/licenses/MIT)
 
 > 前職の経験を元に業務課題をシステム化、SpringBoot + PostgreSQLによる社内蔵書管理用のWebアプリケーションです。
-> 画面操作(MVC)とREST APIの両方に対応しており、Railwayにデプロイ済みなので、動作確認がすぐに出来ます。
+> 下記のデモ版URLから、すぐにお試しいただけます。（ユーザー名とパスワードは、別途お送りしているものをお使い下さい。）
 
-🔗 **デモURL：** [https://zosyo-production.up.railway.app/books](https://zosyo-production.up.railway.app/books)
+🔗 **デモ版URL：** [https://zosyo-production.up.railway.app/books](https://zosyo-production.up.railway.app/books)
 
 ---
 
-## 制作の背景・動機
+### ポイント
+
+- **排他制御**：`@Lock(PESSIMISTIC_WRITE)` による悲観ロックで、同時貸出による在庫の不整合を防止しています。
+- **画面とAPIの分離**：Thymeleaf画面（`/books`, `/loans`）とREST API（`/api/**`、9エンドポイント）を分離しつつ、セッション認証を共有。
+- **履歴が残る返却処理**：返却は削除ではなく `return_date` の更新方式。二重返却が分かるようにしました。
+- **すぐ動かせます**：Railway上にデプロイ済み。
+
+---
+
+### 目次
+
+- [Zosyo（蔵書）- 社内蔵書管理システム](#zosyo蔵書--社内蔵書管理システム)
+    - [ポイント](#ポイント)
+    - [目次](#目次)
+  - [開発した背景](#開発した背景)
+  - [デモ画面](#デモ画面)
+  - [使用技術](#使用技術)
+  - [システム構成](#システム構成)
+  - [機能一覧（画面）](#機能一覧画面)
+  - [REST API](#rest-api)
+  - [ER図](#er図)
+  - [ローカル上の起動手順（DockerCompose）](#ローカル上の起動手順dockercompose)
+    - [前提条件](#前提条件)
+    - [手順](#手順)
+  - [ディレクトリ構成](#ディレクトリ構成)
+  - [開発時に意識したこと](#開発時に意識したこと)
+  - [今後の拡張予定](#今後の拡張予定)
+  - [開発者について](#開発者について)
+  - [ライセンス](#ライセンス)
+
+---
+
+<a id="background"></a>
+
+## 開発した背景
 
 前職の事務員時代、会社が購入した技術書やビジネス書の管理を、手作業＆Excelシートで行っていました。
 手作業は時間がかかりますし、管理者が変わるとExcelシートの作り方も変わるので、更新漏れや貸出記録の消失といった問題が発生しました。
@@ -25,29 +59,29 @@
 
 ---
 
+<a id="demo"></a>
+
 ## デモ画面
 
-### 一覧・検索
+<table>
+<tr>
+<td width="50%" align="center"><b>蔵書一覧・検索</b><br><img src="docs/zosyo_list.png" width="100%"></td>
+<td width="50%" align="center"><b>蔵書登録</b><br><img src="docs/zosyo_new.png" width="100%"></td>
+</tr>
+<tr>
+<td width="50%" align="center"><b>貸出</b><br><img src="docs/zosyo_loan.png" width="100%"></td>
+<td width="50%" align="center"><b>貸出一覧（貸出中・返却済みの状態表示）</b><br><img src="docs/zosyo_loan_list.png" width="100%"></td>
+</tr>
+</table>
 
-![蔵書一覧](docs/zosyo_list.png)
-
-### 登録
-
-![蔵書登録](docs/zosyo_new.png)
-
-### 貸出
-
-![貸出](docs/zosyo_loan.png)
-
-### 貸出一覧（貸出中・返却済みの状態表示）
-
-![貸出一覧](docs/zosyo_loan_list.png)
-
-### REST API 動作例（Thunder Client）
-
-![API動作例](docs/zosyo_api_demo.gif)
+<p align="center">
+<b>🔌 REST API 動作例（Thunder Client）</b><br>
+<img src="docs/zosyo_api_demo.gif" width="85%">
+</p>
 
 ---
+
+<a id="techstack"></a>
 
 ## 使用技術
 
@@ -63,6 +97,8 @@
 | ビルドツール   | Maven                                                                     |
 
 ---
+
+<a id="architecture"></a>
 
 ## システム構成
 
@@ -84,6 +120,8 @@
 
 ---
 
+<a id="features"></a>
+
 ## 機能一覧（画面）
 
 | 機能       | 説明                                                         |
@@ -100,6 +138,8 @@
 | ログアウト | セッション破棄・ログイン画面へのリダイレクト                 |
 
 ---
+
+<a id="restapi"></a>
 
 ## REST API
 
@@ -131,6 +171,8 @@
 > URLの衝突を避けるため意図的にパスを分離しています。
 
 ---
+
+<a id="erd"></a>
 
 ## ER図
 
@@ -170,6 +212,8 @@ authorities
 
 ---
 
+<a id="setup"></a>
+
 ## ローカル上の起動手順（DockerCompose）
 
 ### 前提条件
@@ -193,6 +237,10 @@ open http://localhost:8080/books
 初回起動時はテーブルが自動生成されますが、ログイン用ユーザーは別途登録が必要です。
 `docker compose exec db psql -U zosyo_user -d zosyo_db` でコンテナ内のPostgreSQLに接続し、
 `users` / `authorities` テーブルへ手動でユーザーを登録して下さい。（パスワードはBCryptでハッシュ化して下さい。）
+
+---
+
+<a id="structure"></a>
 
 ## ディレクトリ構成
 
@@ -220,14 +268,18 @@ zosyo/
 
 ---
 
+<a id="designnotes"></a>
+
 ## 開発時に意識したこと
 
-- **在庫の排他制御**：貸出処理は `@Lock(PESSIMISTIC_WRITE)` による悲観ロックで在庫を取得し、同時貸出による在庫数の不整合を防止しています。
-- **返却は削除ではなく状態更新**：貸出履歴を保持するため、返却時は `return_date` を更新する設計とし、二重返却を検知します。
-- **画面とAPIのレイヤー分離**：Thymeleaf画面を使用していますが、`/api/**` 配下へ独立したREST層を追加しました。（段階的な拡張を予定している為）
-- **例外の使い分け**：画面は汎用的な例外処理。APIは `ResourceNotFoundException` / `InsufficientStockException` / `AlreadyReturnedException` を型で判別し、404/409にマッピングするようにしています。
+- **排他制御**：`@Lock(PESSIMISTIC_WRITE)` による悲観ロックで、同時貸出による在庫の不整合を防止しています。
+- **画面とAPIの分離**：Thymeleaf画面（`/books`, `/loans`）とREST API（`/api/**`、9エンドポイント）を分離しつつ、セッション認証を共有。
+- **履歴が残る返却処理**：返却は削除ではなく `return_date` の更新方式。二重返却が分かるようにしました。
+- **すぐ動かせる**：Railway上にデプロイ済なので、実際に操作出来ます。
 
 ---
+
+<a id="roadmap"></a>
 
 ## 今後の拡張予定
 
@@ -238,6 +290,8 @@ zosyo/
 
 ---
 
+<a id="about"></a>
+
 ## 開発者について
 
 事務員からWebエンジニアへ、キャリアチェンジを目指して学習中です。
@@ -246,6 +300,8 @@ zosyo/
 - GitHub：[@akito256a](https://github.com/akito256a)
 
 ---
+
+<a id="license"></a>
 
 ## ライセンス
 
