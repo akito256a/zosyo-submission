@@ -180,8 +180,8 @@ authorities
 
 ```bash
 # 1. リポジトリのクローン
-git clone https://github.com/akito256a/zosyo.git
-cd zosyo
+git clone https://github.com/akito256a/zosyo-submission.git
+cd zosyo-submission
 
 # 2. コンテナのビルド＆起動
 docker compose up --build
