@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>蔵書貸出 | Zosyo</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+  </head>
+  <body class="bg-light">
+    <nav class="navbar navbar-dark bg-success mb-4">
+      <div class="container">
+        <a class="navbar-brand" th:href="@{/books}">📚 Zosyo</a>
+        <span class="text-white navbar-subtitle">社内蔵書管理システム</span>
+        <form th:action="@{/logout}" method="post" class="d-inline ms-auto">
+          <button type="submit" class="btn btn-outline-light btn-sm">
+            ログアウト
+          </button>
+        </form>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title mb-4">蔵書貸出</h5>
+
+              <!-- 書籍情報 -->
+              <div class="alert alert-light border mb-4">
+                <div class="fw-bold" th:text="${book.title}"></div>
+                <small class="text-muted" th:text="${book.author}"></small>
+                <span
+                  class="badge bg-secondary ms-2"
+                  th:text="${book.category}"
+                ></span>
+                <div class="mt-1">
+                  <small>在庫数：</small>
+                  <span
+                    class="badge"
+                    th:classappend="${book.stock > 0} ? 'badge-stock-ok' : 'badge-stock-ng'"
+                    th:text="${book.stock}"
+                  ></span>
+                </div>
+              </div>
+
+              <!-- 貸出フォーム -->
+              <form th:action="@{/loans}" th:object="${loan}" method="post">
+                <input type="hidden" name="bookId" th:value="${book.id}" />
+
+                <!-- 貸出者名 -->
+                <div class="mb-3">
+                  <label class="form-label fw-bold">
+                    貸出者名 <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('borrowerName')} ? 'is-invalid'"
+                    th:field="*{borrowerName}"
+                    placeholder="例：山田 太郎"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('borrowerName')}"
+                    th:errors="*{borrowerName}"
+                  ></div>
+                </div>
+
+                <!-- 返却期限 -->
+                <div class="mb-4">
+                  <label class="form-label fw-bold">
+                    返却期限 <span class="text-danger">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    class="form-control"
+                    th:classappend="${#fields.hasErrors('dueDate')} ? 'is-invalid'"
+                    th:field="*{dueDate}"
+                  />
+                  <div
+                    class="invalid-feedback"
+                    th:if="${#fields.hasErrors('dueDate')}"
+                    th:errors="*{dueDate}"
+                  ></div>
+                </div>
+
+                <!-- ボタン -->
+                <div class="d-flex gap-2">
+                  <button type="submit" class="btn btn-success">
+                    貸出する
+                  </button>
+                  <a th:href="@{/books}" class="btn btn-outline-secondary">
+                    キャンセル
+                  </a>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
