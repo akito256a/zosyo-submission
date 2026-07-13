@@ -91,7 +91,7 @@
 | API            | SpringWeb (`@RestController`) / Jackson (JSON) / BeanValidation           |
 | フロントエンド | Thymeleaf / HTML / CSS / Bootstrap 5                                      |
 | データベース   | PostgreSQL 16                                                             |
-| インフラ       | Railway（Serverless構成）                                                 |
+| インフラ       | Railway　　　　　　　　　　                                                 |
 | コンテナ       | Docker / DockerCompose                                                    |
 | バージョン管理 | Git / GitHub                                                              |
 | ビルドツール   | Maven                                                                     |
