@@ -108,8 +108,8 @@ flowchart TD
 
     subgraph Server["Railway - Spring Boot"]
         direction TB
-        MVC["画面 (MVC)<br/>Thymeleaf / セッション認証"]
-        API["REST API<br/>/api/** (JSON)<br/>同一セッションで認証を共有"]
+        MVC["画面 (MVC)<br/>Thymeleaf/セッション認証"]
+        API["REST API<br/>/api/** (JSON)<br/>同一セッションで認証共有"]
     end
 
     Server -->|JDBC| DB[("PostgreSQL 16 - Railway")]
