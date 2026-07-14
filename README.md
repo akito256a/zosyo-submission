@@ -254,7 +254,7 @@ open http://localhost:8080/books
 ## ディレクトリ構成
 
 ```
-zosyo/
+zosyo-submission/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/zosyo/
