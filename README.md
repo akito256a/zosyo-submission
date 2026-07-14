@@ -195,8 +195,8 @@ erDiagram
     }
 
     LOANS {
-        bigint id 主キー
-        bigint book_id 外部キー
+        bigint id PK
+        bigint book_id FK
         varchar borrower_name
         timestamp loaned_at
         date due_date
