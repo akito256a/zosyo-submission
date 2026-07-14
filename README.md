@@ -102,16 +102,17 @@
 
 ## システム構成
 
-```
-[ユーザーのブラウザ]
-       │ HTTPS
-       ▼
-[Railway - SpringBoot]
-       │  ├─ 画面(MVC): Thymeleaf / セッション認証
-       │  └─ API: /api/** (JSON) / 同一セッションで認証を共有する
-       │ JDBC
-       ▼
-[Railway - PostgreSQL 16]
+```mermaid
+flowchart TD
+    User["ユーザーのブラウザ"] -->|HTTPS| Server
+
+    subgraph Server["Railway - Spring Boot"]
+        direction TB
+        MVC["画面 (MVC)<br/>Thymeleaf / セッション認証"]
+        API["REST API<br/>/api/** (JSON)<br/>同一セッションで認証を共有"]
+    end
+
+    Server -->|JDBC| DB[("PostgreSQL 16 - Railway")]
 ```
 
 - **デプロイ方式：** GitHub連携による自動デプロイ
@@ -176,35 +177,43 @@
 
 ## ER図
 
-```
-books
-  ├── id            BIGSERIAL      PRIMARY KEY
-  ├── title         VARCHAR(100)   NOT NULL         （書籍タイトル）
-  ├── author        VARCHAR(100)                    （著者名）
-  ├── category      VARCHAR(50)                     （カテゴリ）
-  ├── quantity      INT            NOT NULL DEFAULT 1  （総冊数）
-  ├── stock         INT            NOT NULL DEFAULT 1  （在庫数）
-  ├── note          VARCHAR(100)                     （備考）
-  ├── created_at    TIMESTAMP                        （登録日時）
-  └── updated_at    TIMESTAMP                        （更新日時）
+```mermaid
+erDiagram
+    BOOKS ||--o{ LOANS : "貸し出される"
+    USERS ||--o{ AUTHORITIES : "権限を持つ"
 
-loans
-  ├── id            BIGSERIAL      PRIMARY KEY
-  ├── book_id       BIGINT         NOT NULL  FK → books.id
-  ├── borrower_name VARCHAR(100)   NOT NULL         （貸出者名）
-  ├── loaned_at     TIMESTAMP      NOT NULL         （貸出日時）
-  ├── due_date      DATE           NOT NULL         （返却期限）
-  └── return_date   TIMESTAMP                       （返却日時／NULL=貸出中）
+    BOOKS {
+        bigint id PK
+        varchar title
+        varchar author
+        varchar category
+        int quantity
+        int stock
+        varchar note
+        timestamp created_at
+        timestamp updated_at
+    }
 
-users
-  ├── id            BIGSERIAL      PRIMARY KEY
-  ├── username      VARCHAR(50)    NOT NULL UNIQUE  （ユーザー名）
-  ├── password      VARCHAR(255)   NOT NULL         （BCryptハッシュ）
-  └── enabled       BOOLEAN        NOT NULL DEFAULT TRUE
+    LOANS {
+        bigint id 主キー
+        bigint book_id 外部キー
+        varchar borrower_name
+        timestamp loaned_at
+        date due_date
+        timestamp return_date
+    }
 
-authorities
-  ├── username      VARCHAR(50)    NOT NULL         （usersへの外部キー）
-  └── authority     VARCHAR(50)    NOT NULL         （ROLE_USER）
+    USERS {
+        bigint id PK
+        varchar username UK
+        varchar password
+        boolean enabled
+    }
+
+    AUTHORITIES {
+        varchar username FK
+        varchar authority
+    }
 ```
 
 > 補足：入力フォームの文字数制限（バリデーション）は30文字以内としていますが、
