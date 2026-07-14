@@ -17,7 +17,7 @@
 ### ポイント
 
 - **排他制御**：`@Lock(PESSIMISTIC_WRITE)` による悲観ロックで、同時貸出による在庫の不整合を防止しています。
-- **画面とAPIの分離**：Thymeleaf画面（`/books`, `/loans`）とREST API（`/api/**`、9エンドポイント）を分離しつつ、セッション認証を共有。
+- **画面とAPIの分離**：Thymeleaf画面（`/books`）とREST API（`/api/**`）を分離しつつ、セッション認証を共有。
 - **履歴が残る返却処理**：返却は削除ではなく `return_date` の更新方式。二重返却が分かるようにしました。
 - **すぐ動かせます**：Railway上にデプロイ済み。
 
@@ -75,7 +75,7 @@
 </table>
 
 <p align="center">
-<b>🔌 REST API 動作例（Thunder Client）</b><br>
+<b>REST API動作例（ThunderClient）</b><br>
 <img src="docs/zosyo_api_demo.gif" width="85%">
 </p>
 
@@ -91,7 +91,7 @@
 | API            | SpringWeb (`@RestController`) / Jackson (JSON) / BeanValidation           |
 | フロントエンド | Thymeleaf / HTML / CSS / Bootstrap 5                                      |
 | データベース   | PostgreSQL 16                                                             |
-| インフラ       | Railway（Serverless構成）                                                 |
+| インフラ       | Railway　　　　　　　　　　                                                 |
 | コンテナ       | Docker / DockerCompose                                                    |
 | バージョン管理 | Git / GitHub                                                              |
 | ビルドツール   | Maven                                                                     |
